@@ -77,13 +77,25 @@ export default function WishContainer() {
     .then(response => {
         let userWishes = filterWishesByUser(response)
         setWishes(userWishes)
+        // renderWishes(wishes)
     })
   }, [])
+
+  // useEffect( () => {
+  //   fetch(`${url}`)
+  //   .then(response => response.json())
+  //   .then(response => {
+  //       let userWishes = filterWishesByUser(response)
+  //       setWishes(userWishes)
+  //       // renderWishes(wishes)
+  //   })
+  // }, [])
+
 
 
 
   const filterWishesByUser = (data) => {
-      let userId = 10
+      let userId = 1
       return data.filter((data) => data.user.id === userId )
   }
 
@@ -104,22 +116,49 @@ export default function WishContainer() {
     const reqObj = {
         method: 'POST',
         headers: {
-            'Content-Type' : 'application/json', 
-            'Accept' : 'application/json'
+          'Content-Type' : 'application/json', 
+          'Accept' : 'application/json'
         }, 
         body: JSON.stringify(data)
     }
 
+    fetch(url, reqObj)
+    .then(response => response.json())
+    .then(response => {
+      console.log(response)
+      setWishes(state => ([...state, response]))
+    });
+
   }
+
+  const filterDeletedWishes = (id, state) => {
+    return state.filter( (wish) => wish.id !== id)
+  }
+  
+  const deleteWish = (id) => {
+    console.log(id, 'ID')
+    const configObj = {
+      method : 'DELETE'
+    }
+
+    fetch(`${url}/${id}`, configObj)
+    .then(response => response.json())
+    .then(response => {
+      console.log(response)
+      let newWishState = filterDeletedWishes(id, wishes)
+      setWishes(newWishState)
+    })
+  }
+
+
   
 
   const renderWishes = (state) => {
       return state.map((wish, idx) => {
-          return <Wish key= {idx} wish={wish}/>
+        console.log(wish, 'WISH IN RENDER WISHES')
+          return <Wish key= {idx} wish={wish} deleteWish={deleteWish}/>
       })
   }
-
-  console.log(wishes, 'state')
 
 //   key={card}
 
@@ -170,7 +209,7 @@ export default function WishContainer() {
           </Grid>
         </Container>
 
-        <NewWish open = {open} handleClose={handleClose} handleOpen ={handleOpen}/>
+        <NewWish open = {open} handleClose={handleClose} addWish={addWish}/>
       </main>
       {/* Footer */}
       <footer className={classes.footer}>
