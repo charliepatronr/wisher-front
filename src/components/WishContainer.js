@@ -150,17 +150,58 @@ export default function WishContainer() {
     })
   }
 
+  const findWishToEdit = (state, id) => {
+    console.log('FIND WISH TO EDIT FUNCTION')
+
+     const element = state.find(element => {
+      console.log(element)
+       if( element.id === id ) {
+         return true
+       }
+     })
+    console.log(element, 'FOUND ELEMENT')
+  }
+
+
+  const editWish = (data) => {
+
+    const configObj = {
+      method: 'PATCH', 
+      headers : {
+        'Content-Type' : 'application/json', 
+        'Accept' : 'application/json'
+      }, 
+      body: JSON.stringify(data)
+    }
+
+    fetch(`${url}/${data.id}`, configObj)
+    .then(response => response.json())
+    .then(response => {
+      if( !response.error) {
+        let newState = wishes.map(element => {
+          if(element.id === data.id ) {
+            return response
+          } else {
+            return element
+          }
+        });
+        setWishes(newState)
+      }
+
+    });
+
+  }
+
 
   
 
   const renderWishes = (state) => {
       return state.map((wish, idx) => {
         console.log(wish, 'WISH IN RENDER WISHES')
-          return <Wish key= {idx} wish={wish} deleteWish={deleteWish}/>
+          return <Wish key= {idx} wish={wish} deleteWish={deleteWish} editWish = {editWish}/>
       })
   }
 
-//   key={card}
 
 
   

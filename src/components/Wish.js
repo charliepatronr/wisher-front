@@ -21,6 +21,7 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Fade from '@material-ui/core/Fade';
+import EditWish from './EditWish'
 
 
 
@@ -28,68 +29,6 @@ import Fade from '@material-ui/core/Fade';
 
 const Wish = (props) => {
     const {id, name, img, description, price, user} = props.wish
-    // const useStyles = makeStyles((theme) => ({
-    //     icon: {
-    //       marginRight: theme.spacing(2),
-    //     },
-    //     heroContent: {
-    //       backgroundColor: theme.palette.background.paper,
-    //       padding: theme.spacing(8, 0, 6),
-    //     },
-    //     heroButtons: {
-    //       marginTop: theme.spacing(4),
-    //     },
-    //     cardGrid: {
-    //       paddingTop: theme.spacing(8),
-    //       paddingBottom: theme.spacing(8),
-    //     },
-    //     card: {
-    //       height: '100%',
-    //       display: 'flex',
-    //       flexDirection: 'column',
-    //     },
-    //     cardMedia: {
-    //       paddingTop: '56.25%', // 16:9
-    //     },
-    //     cardContent: {
-    //       flexGrow: 1,
-    //     },
-    //     footer: {
-    //       backgroundColor: theme.palette.background.paper,
-    //       padding: theme.spacing(6),
-    //     },
-    //   }));
-    //   const classes = useStyles();
-
-    // return (
-    //     <Grid item xs={12} sm={6} md={4}>
-    //     <Card className={classes.card}>
-    //       <CardMedia
-    //         className={classes.cardMedia}
-    //         image={img}
-    //         title={name}
-    //       />
-    //       <CardContent className={classes.cardContent}>
-    //         <Typography gutterBottom variant="h5" component="h2">
-    //           {name}
-    //         </Typography>
-    //         <Typography variant="body2" color="textSecondary" component="p">
-    //          {description}
-    //         </Typography>
-    //       </CardContent>
-    //       <CardActions>
-    //         <Button size="small" color="primary">
-    //           View
-    //         </Button>
-    //         <Button size="small" color="primary">
-    //           Edit
-    //         </Button>
-    //       </CardActions>
-    //     </Card>
-    //   </Grid>
-
-    // )
-
     const useStyles = makeStyles((theme) => ({
       root: {
         maxWidth: 345,
@@ -116,7 +55,10 @@ const Wish = (props) => {
   const classes = useStyles();
   const [expanded, setExpanded] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [openDialog, setOpenDialog ] = useState(false)
+
   const open = Boolean(anchorEl)
+
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -135,6 +77,17 @@ const Wish = (props) => {
 
     props.deleteWish(id)
     handleClose()
+  }
+
+  const handleEdit = (wish, inputs) => {
+    console.log('EDITING!!!!')
+    handleClose()
+    setOpenDialog(true)
+
+  }
+
+  const closeEdit = () => {
+    setOpenDialog(false)
   }
 
 
@@ -164,9 +117,12 @@ const Wish = (props) => {
         onClose={handleClose}
         TransitionComponent={Fade}
         >
+          <MenuItem onClick={() => handleEdit(id)}>Edit</MenuItem> 
+          <EditWish openDialog= {openDialog} closeEdit = {closeEdit} wish={props.wish} editWish ={props.editWish}/>
           <MenuItem onClick={() => handleDelete(id)}>Delete</MenuItem> 
           <MenuItem onClick={handleClose}>Email</MenuItem>
         </Menu>
+
       <CardMedia
         className={classes.media}
         image={img}
@@ -174,7 +130,7 @@ const Wish = (props) => {
       />
       <CardContent>
         <Typography variant="body2" color="textSecondary" component="p">
-          {description ? description.substring(0, 20) + '...' : null}
+          {description ? description.substring(0, 40): null}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
